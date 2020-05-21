@@ -5,10 +5,13 @@ import org.springframework.stereotype.Component;
 
 //@Component
 public class Http2FileRoute extends RouteBuilder {
+
+    private String url;
+
     @Override
     public void configure() throws Exception {
         from("timer://stock-price?fixedRate=true&delay=0&period=10000")
-                .to("http://hq.sinajs.cn/list=sz000002")
+                .to(url)
                 .process(exchange -> {
                     exchange.toString();
                     String msg = exchange.getMessage().getBody(String.class);
@@ -21,5 +24,13 @@ public class Http2FileRoute extends RouteBuilder {
                     exchange.getMessage().setBody(sb.toString());
                 })
                 .to("file:///Users/steven/Desktop/b?fileName=stock-price.txt&charset=utf-8");
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }
